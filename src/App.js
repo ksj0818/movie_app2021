@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import axios from 'axios';
 // import PropTypes from "prop-types";
 
 
@@ -97,6 +98,20 @@ import React from 'react';
  * 리액트 컴포넌트에서 사용하는 유일한 펑션은 render()임.
  * 컴포넌트가 업데이트 될 때 호출되는 다른 펑션이 존재함
  */
+//  ※ Mounting- component의 태어남
+//  ▶ constructor()
+//  -JS에서 class를 만들 때 호출되는 것
+//  -coponent가 mount될 때 호출됨
+//  ▶ componentDidMount()-component가 처음 render될 때 호출됨
+ 
+//  ※ Updating
+//  ▶ componentDidUpdate()-coponet가 업데이트될 때 호출됨
+ 
+//  ※ Unmounting- coponent가 죽는 것
+//  ▶ componentWillUnmount()
+ 
+//  setState()호출=>component 호출=>render 호출
+//  =>업데이트 완료 후 coponentDidUpdate 실행
 // class App extends React.Component {
 //   state = {
 //     count: 0
@@ -125,13 +140,45 @@ import React from 'react';
 // }
 
 
-
 /**
  * 
  */
 
 class App extends React.Component {
-  
+  state = {
+    isLoading: true,
+    movies: []
+  };
+  // 이론적으로 우리가 해야할 일은 componentDidMount()에서 data를 fetch하는 것, 
+  // 그리고 API로 부터 data fetching이 완료되면
+  // We are ready 대신에 movie를 렌더하고 Map를 만들고 movie를 렌더하는것 
+  // axios는 마치 fetch() 위에 있는 작은 layer임, 예를 들면 땅콩 주위의 멋진 초콜릿. 기본적으로 이게 axios임.
+  // axios 설치: npm install axios
+  // import axios from 'axios';
+  /**
+   * yts에서 만든 API를 사용할것임. (불법적인 토렌트 영화를 업로드 하는 사람들이 있음: YTS)
+   * yts.mx 접속 하단에 API 클릭 (팝업광고가 뜨기 전에 눌러야함)
+   */
+
+  getMovies = async () => { // JS에게 componentDidMount()가 끝날 때까지 약간 시간이 걸릴 수 있다고 말해야함, 그걸 위해서 async를 넣어줌, async 비동기라고 알려주는것
+    const movies = await axios.get('https://yts-proxy.nomadcoders1.now.sh/list_movies.json'); // await 접근이 끝날 때까지 기다림
+  }
+
+  componentDidMount() { 
+    // setTimeout(() => {
+    //   this.setState({isLoading: false})
+    // }, 6000)
+    this.getMovies();
+  }
+
+  render() {
+    const {isLoading} = this.state;
+    return (
+      <div>
+        <h1>{isLoading ? 'Loading...' : 'We are ready'}</h1>
+      </div>
+    )
+  }
 }
 
 export default App;
